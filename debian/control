@@ -1,0 +1,20 @@
+Source: wmf-pt-kill
+Section: database
+Priority: optional
+Maintainer: Balazs Pocze <bpocze@wikimedia.org>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.8
+Homepage: https://www.percona.com/doc/percona-toolkit/2.2/index.html
+
+Package: wmf-pt-kill
+Architecture: all
+Depends: ${misc:Depends}, libdbi-perl,libdbd-mysql-perl
+Description: WMF fork of Perconas pt-kill
+  WMF needs a patched version of pt-kill, because
+  the original one ignores the --busy-time value,
+  which is patched in this version.
+  This package also contains configuration and systemd
+  service for runnint pt-kill as a daemon.
+  See: T183983 and T203674
+  Upstream bug: https://jira.percona.com/browse/PT-548 ,
+  https://jira.percona.com/browse/PT-1492

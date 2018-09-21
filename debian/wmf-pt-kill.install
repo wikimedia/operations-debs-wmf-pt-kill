@@ -1,0 +1,2 @@
+bin/wmf-pt-kill usr/bin
+debian/default /etc/default
