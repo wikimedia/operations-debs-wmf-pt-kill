@@ -1,4 +1,12 @@
-wmf-pt-kill (2.2.20-1+wmf1) strech-wikimedia; urgency=medium
+wmf-pt-kill (2.2.20-1+wmf2) stretch-wikimedia; urgency=medium
+
+  * Changes the systemd service to 'forked' type instead of 'single'
+  * Creates a wmf-pt-kill system user
+  * Changes the systemd service to run as the wmf-pt-kill system user
+
+ -- Balazs Pocze <bpocze@wikimedia.org>  Tue, 02 Oct 2018 08:18:12 +0000
+
+wmf-pt-kill (2.2.20-1+wmf1) stretch-wikimedia; urgency=medium
 
   * Initial release Phabricator Id: T183983
 
