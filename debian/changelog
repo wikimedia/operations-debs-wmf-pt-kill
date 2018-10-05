@@ -1,3 +1,11 @@
+wmf-pt-kill (2.2.20-1+wmf3) stretch-wikimedia; urgency=medium
+
+  * Bugfix as getting rid of needless duplicating of /etc/default/wmf-pt-kill
+    as /etc/default/default example config file
+
+ -- Balazs Pocze <bpocze@wikimedia.org>  Fri, 05 Oct 2018 12:56:12 +0000
+
+
 wmf-pt-kill (2.2.20-1+wmf2) stretch-wikimedia; urgency=medium
 
   * Changes the systemd service to 'forked' type instead of 'single'
