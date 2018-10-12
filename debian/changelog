@@ -1,3 +1,11 @@
+wmf-pt-kill (2.2.20-1+wmf4) stretch-wikimedia; urgency=medium
+
+  * Logrotate config added (T206521)
+  * Removed ExecReload from systemctl service definition because the daemon
+    doesn't reloaded for HUP but stopped
+
+ -- Balazs Pocze <bpocze@wikimedia.org>  Fri, 12 Oct 2018 13:29:41 +0000
+
 wmf-pt-kill (2.2.20-1+wmf3) stretch-wikimedia; urgency=medium
 
   * Bugfix as getting rid of needless duplicating of /etc/default/wmf-pt-kill

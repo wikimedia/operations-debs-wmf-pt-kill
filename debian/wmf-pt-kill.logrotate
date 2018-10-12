@@ -1,0 +1,11 @@
+/var/log/wmf-pt-kill/wmf-pt-kill.log {
+       weekly
+       rotate 4
+       missingok
+       create 640 wmf-pt-kill wmf-pt-kill
+       sharedscripts
+       compress
+       postrotate
+         systemctl restart wmf-pt-kill
+       endscript
+}
