@@ -1,3 +1,9 @@
+wmf-pt-kill (2.2.20-1+wmf5) stretch-wikimedia; urgency=medium
+
+  * Added -F=/dev/null to the daemon start options
+
+ -- Balazs Pocze <bpocze@wikimedia.org>  Tue, 20 Nov 2018 15:19:05 +0000
+
 wmf-pt-kill (2.2.20-1+wmf4) stretch-wikimedia; urgency=medium
 
   * Logrotate config added (T206521)
