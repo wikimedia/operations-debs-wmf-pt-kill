@@ -1,27 +1,28 @@
 Description: fix busy_time command line option
 Queries which been in the *Execute* state were not killed by pt-kill 
 even the busy-time parameter was used. This patch fixes that. 
- .
---- wmf-pt-kill-2.2.20.orig/bin/wmf-pt-kill
-+++ wmf-pt-kill-2.2.20/bin/wmf-pt-kill
+Index: wmf-pt-kill_3.1.0/bin/wmf-pt-kill
+===================================================================
+--- wmf-pt-kill_3.1.0.orig/bin/wmf-pt-kill
++++ wmf-pt-kill_3.1.0/bin/wmf-pt-kill
 @@ -1,5 +1,7 @@
  #!/usr/bin/env perl
  
 +### wmf-pt-kill ###
-+# Patched version of pt-kill for Wikimedia Foundation (https://phabricator.wikimedia.org/T183983#3983899)
++# Patched version of wmf-pt-kill for Wikimedia Foundation (https://phabricator.wikimedia.org/T183983#3983899)
  # This program is part of Percona Toolkit: http://www.percona.com/software/
  # See "COPYRIGHT, LICENSE, AND WARRANTY" at the end of this file for legal
  # notices and disclaimers.
-@@ -3512,7 +3514,7 @@ sub find {
+@@ -3549,7 +3551,7 @@ sub find {
           next QUERY;
        }
  
--      if ( $find_spec{busy_time} && ($query->{Command} || '') eq 'Query' ) {
+-      if ( $find_spec{busy_time} && exists($self->{kill_busy_commands}->{$query->{Command} || ''}) ) {
 +      if ( $find_spec{busy_time} && ($query->{Command} || '') ne 'Sleep' ) {
           next QUERY unless defined($query->{Time});
           if ( $query->{Time} < $find_spec{busy_time} ) {
              PTDEBUG && _d("Query isn't running long enough");
-@@ -6709,7 +6711,7 @@ sub main {
+@@ -6856,7 +6858,7 @@ sub main {
        PTDEBUG && _d('Creating sentinel file', $sentinel);
        open my $fh, '>', $sentinel
           or die "Cannot open $sentinel: $OS_ERROR\n";
@@ -30,7 +31,7 @@ even the busy-time parameter was used. This patch fixes that.
           or die "Cannot write to $sentinel: $OS_ERROR\n";
        close $fh
           or die "Cannot close $sentinel: $OS_ERROR\n";
-@@ -7346,37 +7348,39 @@ if ( !caller ) { exit main(@ARGV); }
+@@ -7493,37 +7495,38 @@ if ( !caller ) { exit main(@ARGV); }
  
  =head1 NAME
  
@@ -44,8 +45,7 @@ even the busy-time parameter was used. This patch fixes that.
  
 -pt-kill kills MySQL connections.  pt-kill connects to MySQL and gets queries
 +Patched version of pt-kill for Wikimedia Foundation (https://phabricator.wikimedia.org/T183983#3983899)
-+
-+wmf-pt-kill kills MySQL connections.  wmf-pt-kill connects to MySQL and gets queries
++wmf-pt-kill kills MySQL connections.  pt-kill connects to MySQL and gets queries
  from SHOW PROCESSLIST if no FILE is given.  Else, it reads queries from one
  or more FILE which contains the output of SHOW PROCESSLIST.  If FILE is -,
 -pt-kill reads from STDIN.
@@ -79,7 +79,7 @@ even the busy-time parameter was used. This patch fixes that.
  
  =head1 RISKS
  
-@@ -7398,7 +7402,7 @@ server.  Before using this tool, please:
+@@ -7545,7 +7548,7 @@ server.  Before using this tool, please:
  
  =head1 DESCRIPTION
  
@@ -88,7 +88,7 @@ even the busy-time parameter was used. This patch fixes that.
  kills or prints them.  This is also known as a "slow query sniper" in some
  circles.  The idea is to watch for queries that might be consuming too many
  resources, and kill them.
-@@ -7406,12 +7410,12 @@ resources, and kill them.
+@@ -7553,12 +7556,12 @@ resources, and kill them.
  For brevity, we talk about killing queries, but they may just be printed
  (or some other future action) depending on what options are given.
  
@@ -104,7 +104,16 @@ even the busy-time parameter was used. This patch fixes that.
  There are a lot of special rules to follow, such as "don't kill replication
  threads," so be careful not to kill something important!
  
-@@ -7473,7 +7477,7 @@ If both L<"--kill"> and L<"--print"> are
+@@ -7605,7 +7608,7 @@ from all classes.  The C<Actions> option
+ taken.  At this step, there are no more classes, just a single list of
+ queries to kill, print, etc.
+ 
+-pt-kill will kill all the queries matching ANY of the specified criteria (logical OR).
++wmf-pt-kill will kill all the queries matching ANY of the specified criteria (logical OR).
+ For example, using:
+ 
+   --busy-time 114 --match-command 'Query|Execute'
+@@ -7632,7 +7635,7 @@ If both L<"--kill"> and L<"--print"> are
  killed and a line for each like the one above is printed.
  
  Any command executed by L<"--execute-command"> is responsible for its own
@@ -113,7 +122,7 @@ even the busy-time parameter was used. This patch fixes that.
  with the command.
  
  =head1 OPTIONS
-@@ -7544,7 +7548,7 @@ Discard events for which this Perl code
+@@ -7703,7 +7706,7 @@ Discard events for which this Perl code
  
  This option is a string of Perl code or a file containing Perl code that gets
  compiled into a subroutine with one argument: $event.  This is a hashref.
@@ -122,7 +131,7 @@ even the busy-time parameter was used. This patch fixes that.
  file and uses its contents as the code.  The file should not contain
  a shebang (#!/usr/bin/perl) line.
  
-@@ -7571,10 +7575,10 @@ filter.txt:
+@@ -7730,10 +7733,10 @@ filter.txt:
  
  Then specify C<--filter filter.txt> to read the code from filter.txt.
  
@@ -135,7 +144,7 @@ even the busy-time parameter was used. This patch fixes that.
  
  It is permissible for the code to have side effects (to alter C<$event>).
  
-@@ -7638,7 +7642,7 @@ Store each query killed in this DSN.
+@@ -7797,7 +7800,7 @@ Store each query killed in this DSN.
  The argument specifies a table to store all killed queries.  The DSN
  passed in must have the databse (D) and table (t) options. The
  table must have at least the following columns.  You can add more columns for
@@ -144,7 +153,7 @@ even the busy-time parameter was used. This patch fixes that.
  following CREATE TABLE definition is also used for L<"--create-log-table">.
  MAGIC_create_log_table:
  
-@@ -7699,7 +7703,7 @@ See pt-query-digest for more information
+@@ -7858,7 +7861,7 @@ See pt-query-digest for more information
  
  =item --rds
  
@@ -153,7 +162,7 @@ even the busy-time parameter was used. This patch fixes that.
  the MySQL command "kill" for L<"--kill"> and "kill query" L<"--kill-query">.
  On RDS these two commands are not available and are replaced by function calls.
  This option modifies L<"--kill"> to use "CALL mysql.rds_kill(thread-id)" instead
-@@ -7709,19 +7713,19 @@ and L<"--kill-query"> to use "CALL mysql
+@@ -7868,19 +7871,19 @@ and L<"--kill-query"> to use "CALL mysql
  
  type: time
  
@@ -177,7 +186,7 @@ even the busy-time parameter was used. This patch fixes that.
  jobs gracefully if necessary.  See also L<"--stop">.
  
  =item --slave-user
-@@ -7768,7 +7772,7 @@ Socket file to use for connection.
+@@ -7927,7 +7930,7 @@ Socket file to use for connection.
  
  Stop running instances by creating the L<"--sentinel"> file.
  
@@ -186,7 +195,7 @@ even the busy-time parameter was used. This patch fixes that.
  exit.  This should have the effect of stopping all running instances which are
  watching the same sentinel file.
  
-@@ -7924,7 +7928,7 @@ See L<"--match-info">.
+@@ -8089,7 +8092,7 @@ See L<"--match-info">.
  
  default: yes; group: Query Matches
  
@@ -195,7 +204,7 @@ even the busy-time parameter was used. This patch fixes that.
  
  =item --ignore-state
  
-@@ -8120,7 +8124,7 @@ These actions are taken for every matchi
+@@ -8285,7 +8288,7 @@ These actions are taken for every matchi
  The actions are taken in this order: L<"--print">, L<"--execute-command">,
  L<"--kill">/L<"--kill-query">.  This order allows L<"--execute-command">
  to see the output of L<"--print"> and the query before
@@ -204,7 +213,7 @@ even the busy-time parameter was used. This patch fixes that.
  not pass any information to L<"--execute-command">.
  
  See also L<"GROUP, MATCH AND KILL">.
-@@ -8133,10 +8137,10 @@ type: string; group: Actions
+@@ -8298,10 +8301,10 @@ type: string; group: Actions
  
  Execute this command when a query matches.
  
@@ -217,7 +226,7 @@ even the busy-time parameter was used. This patch fixes that.
  passed to the command.
  
  See also L<"--wait-before-kill">.
-@@ -8147,12 +8151,12 @@ group: Actions
+@@ -8312,12 +8315,12 @@ group: Actions
  
  Kill the connection for matching queries.
  
@@ -232,7 +241,7 @@ even the busy-time parameter was used. This patch fixes that.
  
  See also L<"--wait-before-kill"> and L<"--wait-after-kill">.
  
-@@ -8162,7 +8166,7 @@ group: Actions
+@@ -8342,7 +8345,7 @@ group: Actions
  
  Kill matching queries.
  
@@ -241,7 +250,7 @@ even the busy-time parameter was used. This patch fixes that.
  newer.  Unlike L<"--kill"> which kills the connection for matching queries,
  this option only kills the query, not its connection.
  
-@@ -8248,7 +8252,7 @@ Table to log actions in, if passed throu
+@@ -8428,7 +8431,7 @@ Table to log actions in, if passed throu
  The environment variable C<PTDEBUG> enables verbose debugging output to STDERR.
  To enable debugging and capture all output to a file, run the tool like:
  
@@ -250,3 +259,20 @@ even the busy-time parameter was used. This patch fixes that.
  
  Be careful: debugging output is voluminous and can generate several megabytes
  of output.
+@@ -8440,7 +8443,7 @@ installed in any reasonably new version
+ 
+ =head1 BUGS
+ 
+-For a list of known bugs, see L<http://www.percona.com/bugs/pt-kill>.
++For a complete history of why this was patched, see https://phabricator.wikimedia.org/T183983#3983838
+ 
+ Please report bugs at L<https://jira.percona.com/projects/PT>.
+ Include the following information in your bug report:
+@@ -8514,6 +8517,6 @@ Place, Suite 330, Boston, MA  02111-1307
+ 
+ =head1 VERSION
+ 
+-pt-kill 3.1.0
++wmf-pt-kill 3.1.0
+ 
+ =cut

@@ -1,10 +1,10 @@
 Source: wmf-pt-kill
 Section: database
 Priority: optional
-Maintainer: Balazs Pocze <bpocze@wikimedia.org>
+Maintainer: Manuel Arostegui <marostegui@wikimedia.org>, Balazs Pocze <bpocze@wikimedia.org>
 Build-Depends: debhelper (>= 9), dh-sysuser
 Standards-Version: 3.9.8
-Homepage: https://www.percona.com/doc/percona-toolkit/2.2/index.html
+Homepage: https://www.percona.com/doc/percona-toolkit/3.1/index.html
 
 Package: wmf-pt-kill
 Architecture: all

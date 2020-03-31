@@ -1,21 +1,20 @@
 wmf-pt-kill for Debian
 ---------------------
 
-The packages upstream is percona-toolkit-2.2.20.
-The source package is built by removing everyhing from percona-toolkit-2.2.20.tar.gz except bin/pt-kill
-(Note: the The latest release of percona toolkit is 3.0.12, but we patch 2.2.20)
+The packages upstream is percona-toolkit-3.1.0.
+The source package is built by removing everyhing from percona-toolkit-3.1.0.tar.gz except bin/pt-kill
 
-tar xf percona-toolkit-2.2.20.tar.gz
+tar xf percona-toolkit-3.1.0.tar.gz
 mkdir tmp-pt-kill
-mv percona-toolkit-2.2.20/bin/pt-kill tmp-pt-kill
-rm -rf percona-toolkit-2.2.20/*
-mkdir percona-toolkit-2.2.20/bin
-mv tmp-pt-kill/pt-kill tar xf percona-toolkit-2.2.20.tar.gz
+mv percona-toolkit-3.1.0/bin/pt-kill tmp-pt-kill
+rm -rf percona-toolkit-3.1.0/*
+mkdir percona-toolkit-3.1.0/bin
+mv tmp-pt-kill/pt-kill tar xf percona-toolkit-3.1.0.tar.gz
 rmdir tmp-pt-kill
-mv percona-toolkit-2.2.20 wmf-pt-kill_2.2.20.orig
-tar cf wmf-pt-kill_2.2.20.orig.tar wmf-pt-kill_2.2.20.orig
-xz wmf-pt-kill_2.2.20.orig.tar
+mv percona-toolkit-3.1.0 wmf-pt-kill_3.1.0.orig
+tar cf wmf-pt-kill_3.1.0.orig.tar wmf-pt-kill_3.1.0.orig
+xz wmf-pt-kill_3.1.0.orig.tar
 
 
- -c Balazs Pocze <bpocze@wikiemdia.org>  Fri, 14 Sep 2018 13:10:12 +0000
+ -c Manuel Arostegui <marostegui@wikiemdia.org>  Mon, 30 Mar 2018 18:10:12 +0000
 
